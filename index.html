@@ -72,10 +72,10 @@
 }
 :root[data-fb-theme="light"] { color-scheme: light; }
 
-html { height: 100%; box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+html { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+html.lock { overflow: hidden; }
 *, *::before, *::after { box-sizing: border-box; }
-body { height: 100%; background: var(--paper); color: var(--ink); font: 400 14px/1.45 var(--f-body); overflow: hidden; }
-#app { height: 100%; }
+body { background: var(--paper); color: var(--ink); font: 400 14px/1.45 var(--f-body); }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -118,8 +118,8 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 .switch[aria-checked="true"]::after { inset-inline-start: 19px; }
 
 /* ---------- shell ---------- */
-.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); height: 100%; }
-.side { display: flex; flex-direction: column; min-height: 0; background: var(--surface-2); border-inline-end: 1px solid var(--line); padding: 16px 12px 12px; gap: 14px; }
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+.side { position: sticky; top: 0; height: 100vh; align-self: start; display: flex; flex-direction: column; min-height: 0; background: var(--surface-2); border-inline-end: 1px solid var(--line); padding: 16px 12px 12px; gap: 14px; }
 .brand { display: flex; align-items: center; gap: 10px; padding: 2px 6px 6px; }
 .brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
 .brand-name { font: 700 17px/1 var(--f-display); letter-spacing: -.01em; }
@@ -134,9 +134,9 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 .bdot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
 .side-foot { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
 .side-foot .row { display: flex; gap: 4px; align-items: center; }
-.main { min-width: 0; min-height: 0; display: flex; flex-direction: column; height: 100%; }
-.view { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
-.view.is-board { overflow: hidden; }
+.main { min-width: 0; display: flex; flex-direction: column; }
+.view { flex: 1; }
+.view.is-board { background-color: var(--paper); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
 .pad { padding-left: var(--gut-l); padding-right: var(--gut-r); }
 .wrap { max-width: 1180px; margin-inline: auto; padding-block: 28px 48px; }
 .topbar, .bottomnav { display: none; }
@@ -144,8 +144,10 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 @media (max-width: 999px) {
   .shell { grid-template-columns: minmax(0, 1fr); }
   .side { display: none; }
-  .topbar { display: flex; align-items: center; gap: 6px; min-height: 52px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
-  .bottomnav { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface-2); border-top: 1px solid var(--line); padding-block: 4px; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--surface-2); }
+  .topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; display: flex; align-items: center; gap: 6px; height: 52px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+  .main { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface-2); border-top: 1px solid var(--line); padding-top: 4px; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
   .bottomnav a, .bottomnav button { display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--ink-2); text-decoration: none; font-size: 11px; font-weight: 500; border: 0; background: transparent; }
   .bottomnav a[aria-current="page"] { color: var(--accent-text); }
   .bottomnav .fab { width: 44px; height: 44px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); place-content: center; justify-self: center; align-self: center; padding: 0; }
@@ -199,7 +201,7 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 .notice.warn { background: color-mix(in srgb, var(--high) 16%, var(--surface)); }
 
 /* ---------- board ---------- */
-.bview { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.bview { display: flex; flex-direction: column; }
 .bhead { display: flex; align-items: center; gap: 12px; padding-block: 14px 10px; flex-wrap: wrap; }
 .bhead .title { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 260px; }
 .bhead h1 { font-size: 21px; font-weight: 600; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -209,9 +211,9 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 .filter .icon { position: absolute; inset-inline-start: 10px; color: var(--ink-3); pointer-events: none; }
 .filter .input { padding-inline-start: 32px; min-height: 34px; width: 210px; }
 .ctabs { display: none; }
-.bscroll { flex: 1; min-height: 0; overflow-x: auto; overflow-y: hidden; background-color: var(--paper); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; border-top: 1px solid var(--line); }
-.cols { display: flex; gap: 14px; height: 100%; width: max-content; padding-block: 16px 18px; align-items: flex-start; }
-.col { width: var(--col-w); flex: none; display: flex; flex-direction: column; max-height: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-col); }
+.bscroll { overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--line); min-height: calc(100vh - 96px); }
+.cols { display: flex; gap: 14px; width: max-content; padding-block: 16px 18px; align-items: flex-start; }
+.col { width: var(--col-w); flex: none; display: flex; flex-direction: column; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-col); }
 .col[data-drag-src] { opacity: .4; }
 .col-head { display: flex; align-items: center; gap: 6px; padding: 9px 6px 7px 8px; }
 .col-handle { display: grid; place-items: center; width: 22px; height: 26px; border-radius: 6px; color: var(--ink-3); cursor: grab; touch-action: none; border: 0; background: transparent; flex: none; }
@@ -222,7 +224,7 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 .col-name-input { flex: 1; min-width: 0; font: 600 14px/1.2 var(--f-display); padding: 4px 6px; border: 1px solid var(--accent); border-radius: 6px; background: var(--surface); outline: none; }
 .col-count { font: 500 11.5px/1 var(--f-mono); color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
 .col-default { font: 500 10.5px/1 var(--f-body); letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text); }
-.col-body { flex: 1 1 auto; min-height: 56px; overflow-y: auto; padding: 4px 8px 6px; display: flex; flex-direction: column; gap: 8px; overflow-x: hidden; overscroll-behavior-y: contain; }
+.col-body { min-height: 56px; padding: 4px 8px 6px; display: flex; flex-direction: column; gap: 8px; }
 .col-foot { padding: 2px 8px 8px; }
 .add-task { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-2); font-weight: 500; text-align: start; }
 .add-task:hover { background: var(--surface-3); color: var(--ink); }
@@ -240,12 +242,12 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
   .bhead .tools { width: 100%; }
   .filter { flex: 1; }
   .filter .input { width: 100%; }
-  .ctabs { display: flex; gap: 4px; overflow-x: auto; padding-block: 0 8px; scrollbar-width: none; }
+  .ctabs { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 52px); z-index: 20; background: var(--paper); display: flex; gap: 4px; overflow-x: auto; padding-block: 6px 8px; scrollbar-width: none; }
   .ctabs::-webkit-scrollbar { display: none; }
   .ctabs button { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 11px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
   .ctabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .ctabs .num { font-size: 11px; opacity: .8; }
-  .bscroll { scroll-snap-type: x mandatory; scroll-padding-inline: 16px; }
+  .bscroll { scroll-snap-type: x mandatory; scroll-padding-inline: 16px; min-height: 0; }
   .bscroll.dragging { scroll-snap-type: none; }
   :root { --col-w: min(84vw, 340px); }
   .col { scroll-snap-align: start; }
@@ -410,7 +412,7 @@ body.is-dragging, body.is-dragging * { cursor: grabbing !important; user-select:
 .dep.open .t { font-weight: 500; }
 .dep.closed .t { color: var(--ink-2); text-decoration: line-through; }
 .stamp { font: 400 11.5px/1.6 var(--f-mono); color: var(--ink-2); }
-@media (max-width: 600px) { .dr-head .lbl { display: none; } }
+@media (max-width: 600px) { .dr-head .lbl, .dr-foot .lbl { display: none; } .dr-foot { gap: 6px; } }
 .dr-foot { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--line); }
 .history { display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
 .history div { display: flex; gap: 10px; }
@@ -468,6 +470,18 @@ body.is-dragging, body.is-dragging * { cursor: grabbing !important; user-select:
 .timer .ctl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .focus .card-like { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 10px; }
 .focus .desc { white-space: pre-wrap; color: var(--ink); line-height: 1.6; margin: 0; }
+
+/* phones: task details, dialogs and focus mode open as full pages that scroll with the document */
+.modal-wrap.page { position: static; display: block; min-height: 100vh; padding: 0; background: var(--paper); overflow: visible; }
+.modal-wrap.page .modal { width: 100%; max-height: none; border: 0; border-radius: 0; box-shadow: none; background: var(--paper); overflow: visible; }
+.modal-wrap.page .modal-h { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface-2); border-bottom: 1px solid var(--line); padding: 10px var(--gut-r) 10px var(--gut-l); }
+.modal-wrap.page .modal-b { padding: 18px var(--gut-r) 8px var(--gut-l); overflow: visible; }
+.modal-wrap.page .modal-f { padding: 16px var(--gut-r) calc(24px + env(safe-area-inset-bottom, 0px)) var(--gut-l); }
+.drawer.page { position: static; width: 100%; min-height: 100vh; border: 0; box-shadow: none; padding-top: 0; padding-bottom: 0; }
+.drawer.page .dr-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); }
+.drawer.page .dr-body { overflow: visible; }
+.drawer.page .dr-foot { position: sticky; bottom: 0; z-index: 5; background: var(--surface); padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+.focus.page { position: static; min-height: 100vh; overflow: visible; padding-top: 0; padding-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -638,7 +652,7 @@ const DICT = {
     'hist.created': 'Created', 'hist.moved': 'Moved to {to}', 'hist.completed': 'Completed', 'hist.reopened': 'Reopened', 'hist.archived': 'Archived', 'hist.restored': 'Restored', 'hist.deleted': 'Deleted', 'hist.focus': 'Focused for {m} min',
     'rec.none': 'Does not repeat', 'rec.daily': 'Every day', 'rec.weekly': 'Every week', 'rec.monthly': 'Every month', 'rec.custom': 'Custom', 'rec.every': 'every', 'rec.interval': 'Interval', 'rec.unit': 'Unit',
     'rec.days': 'days', 'rec.weeks': 'weeks', 'rec.months': 'months', 'rec.hint': 'When you complete it, a fresh copy appears in the default column with the next due date.',
-    'rem.when': 'Reminder time', 'rem.add': 'Add reminder', 'rem.remove': 'Remove reminder', 'rem.hint': 'Reminders show while Focus Board is open in this browser.',
+    'rem.when': 'Reminder time', 'rem.add': 'Add reminder', 'rem.remove': 'Remove reminder', 'rem.hint': 'Reminders show while Focus Board is open in this browser.', 'rem.hintApp': 'Arrives as a phone notification while the app is open or in the background. If the app was closed, the morning summary lists what is due.',
     'cl.reorder': 'Drag to reorder, or use the arrow keys', 'cl.item': 'Checklist item', 'cl.remove': 'Remove item', 'cl.addPh': 'Add a checklist item',
     'focus.title': 'Focus', 'focus.back': 'Back to board', 'focus.running': 'Stay with it', 'focus.paused': 'Paused', 'focus.ready': 'Ready when you are', 'focus.finished': 'Session complete',
     'focus.start': 'Start', 'focus.pause': 'Pause', 'focus.resume': 'Resume', 'focus.again': 'Go again', 'focus.reset': 'Reset', 'focus.length': 'Session length', 'focus.min': '{m} min',
@@ -761,7 +775,7 @@ const DICT = {
     'hist.created': 'נוצרה', 'hist.moved': 'הועברה אל {to}', 'hist.completed': 'הושלמה', 'hist.reopened': 'נפתחה מחדש', 'hist.archived': 'הועברה לארכיון', 'hist.restored': 'שוחזרה', 'hist.deleted': 'נמחקה', 'hist.focus': 'פוקוס של {m} דק׳',
     'rec.none': 'ללא חזרה', 'rec.daily': 'כל יום', 'rec.weekly': 'כל שבוע', 'rec.monthly': 'כל חודש', 'rec.custom': 'מותאם', 'rec.every': 'כל', 'rec.interval': 'מרווח', 'rec.unit': 'יחידה',
     'rec.days': 'ימים', 'rec.weeks': 'שבועות', 'rec.months': 'חודשים', 'rec.hint': 'כשתשלים אותה, עותק חדש יופיע בעמודת ברירת המחדל עם תאריך היעד הבא.',
-    'rem.when': 'זמן התזכורת', 'rem.add': 'הוספת תזכורת', 'rem.remove': 'הסרת תזכורת', 'rem.hint': 'התזכורות מוצגות כל עוד Focus Board פתוח בדפדפן הזה.',
+    'rem.when': 'זמן התזכורת', 'rem.add': 'הוספת תזכורת', 'rem.remove': 'הסרת תזכורת', 'rem.hint': 'התזכורות מוצגות כל עוד Focus Board פתוח בדפדפן הזה.', 'rem.hintApp': 'מגיעה כהתראה בטלפון כשהאפליקציה פתוחה או ברקע. אם האפליקציה הייתה סגורה, סיכום הבוקר מציג מה מיועד.',
     'cl.reorder': 'גרור לשינוי סדר, או השתמש בחיצים', 'cl.item': 'פריט ברשימה', 'cl.remove': 'הסרת פריט', 'cl.addPh': 'הוספת פריט לרשימה',
     'focus.title': 'פוקוס', 'focus.back': 'חזרה ללוח', 'focus.running': 'להישאר בזה', 'focus.paused': 'מושהה', 'focus.ready': 'מוכן כשאתה מוכן', 'focus.finished': 'הסשן הסתיים',
     'focus.start': 'התחלה', 'focus.pause': 'השהיה', 'focus.resume': 'המשך', 'focus.again': 'עוד סבב', 'focus.reset': 'איפוס', 'focus.length': 'אורך הסשן', 'focus.min': '{m} דק׳',
@@ -1676,7 +1690,31 @@ const ui = {
   dialog(d) { ui.set({ dialog: d, menu: null }); },
   closeDialog() { ui.set({ dialog: null }); },
 };
-function navigate(hash) { if (location.hash !== hash) location.hash = hash; }
+// ---------- phone back gesture and keyboard ----------
+// On phones, task details, dialogs and focus mode take one history entry, so the back gesture closes them.
+const layer = { pushed: false, ignorePop: 0 };
+try { history.scrollRestoration = 'manual'; } catch (e) {}
+const kb = { closedAt: 0, h: 0 };
+const isField = el => !!el && (el.tagName === 'TEXTAREA' || el.isContentEditable || (el.tagName === 'INPUT' && !['checkbox', 'radio', 'button', 'submit', 'range', 'color', 'file'].includes(el.type)));
+const isCoarse = () => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
+try {
+  if (window.visualViewport) {
+    kb.h = visualViewport.height;
+    visualViewport.addEventListener('resize', () => { const hh = visualViewport.height; if (hh > kb.h + 120) kb.closedAt = Date.now(); kb.h = hh; });
+  }
+} catch (e) {}
+// true when a back gesture or Escape is really "hide the keyboard"
+function keyboardBack() { return (isCoarse() && isField(document.activeElement)) || Date.now() - kb.closedAt < 700; }
+window.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || !isCoarse() || !keyboardBack()) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  if (isField(document.activeElement)) document.activeElement.blur();
+}, true);
+function navigate(hash) {
+  if (location.hash === hash) return;
+  if (layer.pushed) { layer.pushed = false; try { location.replace(hash); return; } catch (e) {} }
+  location.hash = hash;
+}
 function doUndo() {
   const label = store.undo();
   if (label) ui.toast(t('toast.undone', { what: t('act.' + label) }));
@@ -2061,14 +2099,13 @@ function dndLoop() {
     if (dx) sc.scrollLeft += dx;
   }
   if (a.type === 'task') {
-    const el = document.elementFromPoint(a.x, a.y);
-    const body = el && el.closest('[data-col]') && el.closest('[data-col]').querySelector('[data-col-body]');
-    if (body) {
-      const r = body.getBoundingClientRect(); let dy = 0;
-      if (a.y < r.top + 40) dy = -Math.ceil((r.top + 40 - a.y) / 3);
-      else if (a.y > r.bottom - 40) dy = Math.ceil((a.y - (r.bottom - 40)) / 3);
-      if (dy) body.scrollTop += dy;
-    }
+    // the whole page scrolls: nudge it when the card nears the top or bottom edge
+    const narrow = window.innerWidth < 1000;
+    const top = narrow ? 130 : 60, bottom = window.innerHeight - (narrow ? 96 : 40);
+    let dy = 0;
+    if (a.y < top) dy = -Math.ceil((top - a.y) / 4);
+    else if (a.y > bottom) dy = Math.ceil((a.y - bottom) / 4);
+    if (dy) window.scrollBy(0, dy);
   }
   dndTarget();
   a.raf = requestAnimationFrame(dndLoop);
@@ -2910,11 +2947,15 @@ function Menu({ menu }) {
         const n = els[(i + (e.key === 'ArrowDown' ? 1 : -1) + els.length) % els.length]; n && n.focus();
       }
     };
-    const onResize = () => ui.closeMenu();
+    // the phone keyboard changes the height, so only a width change closes the menu
+    const w0 = window.innerWidth;
+    const onResize = () => { if (window.innerWidth !== w0) ui.closeMenu(); };
+    const onScroll = e => { if (ref.current && e.target instanceof Node && ref.current.contains(e.target)) return; ui.closeMenu(); };
     document.addEventListener('pointerdown', onDown, true);
     document.addEventListener('keydown', onKey, true);
     window.addEventListener('resize', onResize);
-    return () => { document.removeEventListener('pointerdown', onDown, true); document.removeEventListener('keydown', onKey, true); window.removeEventListener('resize', onResize); };
+    window.addEventListener('scroll', onScroll, true);
+    return () => { document.removeEventListener('pointerdown', onDown, true); document.removeEventListener('keydown', onKey, true); window.removeEventListener('resize', onResize); window.removeEventListener('scroll', onScroll, true); };
   }, [menu.key]);
   return html`<div class="menu" role="menu" ref=${ref} style=${`left:${pos.left}px;top:${pos.top}px`}>
     ${items.map((it, i) => it.divider ? html`<hr key=${'d' + i} />` : it.header ? html`<div class="mh" key=${'h' + i}>${it.header}</div>` : html`<button key=${'i' + i} class=${'mi' + (it.danger ? ' danger' : '')} role=${it.checked != null ? 'menuitemcheckbox' : 'menuitem'} aria-checked=${it.checked != null ? String(!!it.checked) : null} disabled=${it.disabled}
@@ -2954,7 +2995,8 @@ function Modal({ title, children, footer, wide, onClose }) {
     document.addEventListener('keydown', onKey, true);
     return () => { document.removeEventListener('keydown', onKey, true); prev && prev.focus && prev.isConnected && prev.focus({ preventScroll: true }); };
   }, []);
-  return html`<div class="modal-wrap" onPointerDown=${e => { if (e.target === e.currentTarget) onClose(); }}>
+  const page = ui.pageMode;
+  return html`<div class=${'modal-wrap' + (page ? ' page' : '')} onPointerDown=${e => { if (!page && e.target === e.currentTarget) onClose(); }}>
     <div class=${'modal' + (wide ? ' wide' : '')} role="dialog" aria-modal="true" aria-labelledby="modal-title" ref=${ref}>
       <div class="modal-h"><h2 id="modal-title">${title}</h2><button class="ibtn" aria-label=${t('btn.close')} onClick=${onClose}><${Icon} n="x" /></button></div>
       <div class="modal-b">${children}</div>
@@ -3131,8 +3173,9 @@ function TaskDrawer({ taskId, state }) {
   const depOptions = state.tasks.filter(x => x.boardId === task.boardId && x.id !== task.id && !x.archived && !task.dependsOn.includes(x.id));
   const hist = state.activity.filter(a => a.taskId === task.id).slice(-8).reverse();
   const clDone = task.checklist.filter(c => c.done).length;
-  return html`<div class="scrim" onClick=${() => ui.closeTask()}></div>
-  <aside class="drawer" role="dialog" aria-modal="true" aria-label=${task.title} ref=${ref} tabindex="-1">
+  const page = ui.pageMode;
+  return html`${!page && html`<div class="scrim" onClick=${() => ui.closeTask()}></div>`}
+  <aside class=${'drawer' + (page ? ' page' : '')} role="dialog" aria-modal=${page ? null : 'true'} aria-label=${task.title} ref=${ref} tabindex="-1">
     <div class="dr-head">
       <div class="crumb"><${BoardTile} board=${board} sm /><span style="overflow:hidden;text-overflow:ellipsis">${board.name}</span><${Icon} n="chevron" cls="xs" flip /><span>${col ? col.name : ''}</span>${task.archived && html`<span class="badge">${t('badge.archived')}</span>`}</div>
       ${!task.archived && html`<button class=${'btn sm' + (done ? '' : ' primary')} onClick=${() => A.toggleComplete(task.id)}><${Icon} n=${done ? 'restore' : 'check'} cls="sm" /><span class="lbl">${done ? t('menu.reopen') : t('menu.complete')}</span></button>`}
@@ -3199,7 +3242,7 @@ function TaskDrawer({ taskId, state }) {
       ${task.archived
         ? html`<button class="btn sm" onClick=${() => A.restoreTask(task.id)}><${Icon} n="restore" cls="sm" />${t('btn.restore')}</button>`
         : html`<button class="btn sm" onClick=${() => { A.archiveTask(task.id); ui.closeTask(); }}><${Icon} n="archive" cls="sm" />${t('menu.archive')}</button>`}
-      <button class="btn sm danger" style="margin-inline-start:auto" onClick=${() => A.deleteTask(task.id)}><${Icon} n="trash" cls="sm" />${t('menu.delete')}</button>
+      <button class="btn sm danger" style="margin-inline-start:auto" aria-label=${t('menu.delete')} onClick=${() => A.deleteTask(task.id)}><${Icon} n="trash" cls="sm" /><span class="lbl">${t('menu.delete')}</span></button>
     </div>
   </aside>`;
 }
@@ -3286,7 +3329,7 @@ function ReminderEditor({ task }) {
       <input id="task-rem" class="input" type="datetime-local" style="width:auto;flex:1 1 200px" aria-label=${t('rem.when')} value=${at} onInput=${e => setAt(e.target.value)} />
       <button class="btn sm" type="submit"><${Icon} n="bell" cls="sm" />${t('rem.add')}</button>
     </form>
-    <div class="muted" style="font-size:12px">${t('rem.hint')}</div>
+    <div class="muted" style="font-size:12px">${PWA ? t('rem.hintApp') : t('rem.hint')}</div>
   </div>`;
 }
 
@@ -3333,6 +3376,8 @@ function FocusMode({ taskId, state }) {
   });
   const logPartial = () => { const spent = dur - left - tick.current.logged; if (spent >= 60) { A.logFocus(taskId, Math.floor(spent / 60)); tick.current.logged += Math.floor(spent / 60) * 60; } };
   const exit = () => { logPartial(); ui.set({ focusId: null }); };
+  ui.focusExit = exit;
+  useEffect(() => () => { ui.focusExit = null; }, []);
   if (!task) return null;
   const preset = m => { if (running) return; logPartial(); tick.current.logged = 0; setDur(m * 60); setLeft(m * 60); };
   const reset = () => { logPartial(); setRunning(false); tick.current.logged = 0; setLeft(dur); };
@@ -3340,7 +3385,7 @@ function FocusMode({ taskId, state }) {
   const board = state.boards.find(b => b.id === task.boardId);
   const cmap = colMap(state), done = isTaskDone(cmap, task);
   const clDone = task.checklist.filter(c => c.done).length;
-  return html`<div class="focus" role="dialog" aria-modal="true" aria-label=${t('focus.title')}>
+  return html`<div class=${'focus' + (ui.pageMode ? ' page' : '')} role="dialog" aria-modal=${ui.pageMode ? null : 'true'} aria-label=${t('focus.title')}>
     <div class="focus-in pad">
       <div class="focus-top"><span class="eyebrow"><${Icon} n="target" cls="sm" />${t('focus.title')} · ${board && board.name}</span><button class="btn sm" onClick=${exit}><${Icon} n="back" cls="sm" flip />${t('focus.back')}</button></div>
       <h1>${task.title}</h1>
@@ -3370,6 +3415,8 @@ function FocusMode({ taskId, state }) {
 }
 
 // ---------- app ----------
+let listScrollY = 0;
+window.addEventListener('scroll', () => { if (!ui.pageMode) listScrollY = window.scrollY; }, { passive: true });
 function parseRoute() {
   const h = (location.hash || '').slice(1);
   if (h.startsWith('b-')) return { view: 'board', id: h.slice(2) };
@@ -3384,8 +3431,57 @@ function App() {
   ui.current = u;
   const routeRef = useRef(route); routeRef.current = route;
 
+  // phone layout: task details, dialogs and focus mode become full pages that scroll with the document
+  const [narrow, setNarrow] = useState(() => { try { return matchMedia('(max-width: 999px)').matches; } catch (e) { return false; } });
   useEffect(() => {
-    const on = () => { setRoute(parseRoute()); setU(p => ({ ...p, menu: null, addingColumn: null })); hideTip(); };
+    let mq; try { mq = matchMedia('(max-width: 999px)'); } catch (e) { return undefined; }
+    const on = () => setNarrow(mq.matches);
+    if (mq.addEventListener) mq.addEventListener('change', on); else mq.addListener(on);
+    return () => { if (mq.removeEventListener) mq.removeEventListener('change', on); else mq.removeListener(on); };
+  }, []);
+  const anyPanel = !!(u.taskId || u.focusId || u.dialog);
+  const pageMode = narrow && !!(u.taskId || u.focusId || (u.dialog && u.dialog.type !== 'confirm'));
+  ui.pageMode = pageMode;
+  const savedY = useRef(0);
+  useLayoutEffect(() => {
+    // hiding the list shortens the page and clamps scrollY, so use the position recorded before
+    if (pageMode) { savedY.current = listScrollY; window.scrollTo(0, 0); }
+    else if (savedY.current) { window.scrollTo(0, savedY.current); savedY.current = 0; }
+  }, [pageMode]);
+  useEffect(() => { document.documentElement.classList.toggle('lock', !narrow && anyPanel); }, [narrow, anyPanel]);
+  // phone back gesture: one history entry while a panel is open, so back closes it
+  const wantLayer = narrow && anyPanel;
+  useEffect(() => {
+    try {
+      if (wantLayer && !layer.pushed) { history.pushState({ fbLayer: 1 }, ''); layer.pushed = true; }
+      else if (!wantLayer && layer.pushed) { layer.pushed = false; layer.ignorePop++; history.back(); }
+    } catch (e) {}
+  }, [wantLayer]);
+  useEffect(() => {
+    const onPop = () => {
+      if (layer.ignorePop) { layer.ignorePop--; return; }
+      if (!layer.pushed) return;
+      layer.pushed = false;
+      const again = () => { try { history.pushState({ fbLayer: 1 }, ''); layer.pushed = true; } catch (e) {} };
+      // back while typing only hides the keyboard
+      if (keyboardBack()) { if (isField(document.activeElement)) document.activeElement.blur(); again(); return; }
+      const cur = ui.current;
+      let left = (cur.taskId ? 1 : 0) + (cur.focusId ? 1 : 0) + (cur.dialog ? 1 : 0);
+      if (cur.menu) ui.closeMenu();
+      else {
+        left--;
+        if (cur.dialog) ui.closeDialog();
+        else if (cur.focusId) { if (ui.focusExit) ui.focusExit(); else ui.set({ focusId: null }); }
+        else if (cur.taskId) ui.closeTask();
+      }
+      if (left > 0) again();
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  useEffect(() => {
+    const on = () => { setRoute(parseRoute()); setU(p => ({ ...p, menu: null, addingColumn: null })); hideTip(); savedY.current = 0; window.scrollTo(0, 0); };
     window.addEventListener('hashchange', on);
     return () => window.removeEventListener('hashchange', on);
   }, []);
@@ -3472,7 +3568,7 @@ function App() {
   else if (route.view === 'prefs') view = html`<${SettingsView} state=${state} />`;
   else view = html`<${HomeView} state=${state} />`;
 
-  return html`<div class="shell">
+  return html`<div class="shell" hidden=${pageMode}>
       <${Sidebar} state=${state} route=${route} />
       <main class="main">
         <${TopBar} state=${state} route=${route} />

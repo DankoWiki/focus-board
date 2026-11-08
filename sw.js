@@ -1,5 +1,5 @@
 // Focus Board service worker: offline cache, reminders and the morning summary.
-const VERSION = 'e4e2501bb4';
+const VERSION = '665a0ebd77';
 const CACHE = 'focus-board-' + VERSION;
 const ASSETS = [
   "./",
